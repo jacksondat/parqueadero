@@ -1,0 +1,13 @@
+.classpath
+.settings
+.project
+.metadata/
+Servers/
+.sonarlint/
+.recommenders/
+
+/build/
+/bin/
+/jacoco/
+.gradle/
+
