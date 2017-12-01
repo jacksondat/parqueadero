@@ -7,50 +7,67 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ceiba.parqueadero.ws.dao.VehiculoDAO;
-import com.ceiba.parqueadero.ws.dao.impl.VehiculoH2DAOImpl;
+import com.ceiba.parqueadero.ws.dao.ClienteDAO;
+import com.ceiba.parqueadero.ws.dao.impl.ClienteH2DAOImpl;
 import com.ceiba.parqueadero.ws.enums.TipoVehiculoEnum;
+import com.ceiba.parqueadero.ws.exceptions.ClienteException;
 import com.ceiba.parqueadero.ws.exceptions.TipoVehiculoException;
 import com.ceiba.parqueadero.ws.exceptions.VehiculoException;
 import com.ceiba.parqueadero.ws.model.Carro;
+import com.ceiba.parqueadero.ws.model.Cliente;
 import com.ceiba.parqueadero.ws.model.Moto;
 import com.ceiba.parqueadero.ws.model.Vehiculo;
-import com.ceiba.parqueadero.ws.persistence.entities.VehiculoEntity;
+import com.ceiba.parqueadero.ws.persistence.entities.ClienteEntity;
 import com.ceiba.parqueadero.ws.services.AdministradorCeldas;
 import com.ceiba.parqueadero.ws.services.AdministradorCeldasCeibaFactory;
 import com.ceiba.parqueadero.ws.services.ParqueaderoService;
 
 public class ParqueaderoCeibaServiceImpl implements ParqueaderoService {
 
-	private VehiculoDAO vehiculoDAO;
+	private ClienteDAO clienteDAO;
+	private AdministradorCeldas administradorCeldas;
 	private LocalDate localDate;
 	
-	private final char INICIAL_PLACA_CONDICIONAL = 'A';
+	
+	public static final char INICIAL_PLACA_CONDICIONAL = 'A';
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	public ParqueaderoCeibaServiceImpl() {
-		vehiculoDAO = new VehiculoH2DAOImpl();
+		clienteDAO = new ClienteH2DAOImpl();
 	}
 	
-	public ParqueaderoCeibaServiceImpl(LocalDate localDate) {
-		this();
+	public void setLocalDate(LocalDate localDate) {
 		this.localDate = localDate;
+	}
+	
+	public LocalDate getLocalDate() {
+		if(localDate == null) {
+			localDate = LocalDate.now();
+		}
+		return localDate;
+	}
+	
+	public AdministradorCeldas getAdministradorCeldas(Vehiculo vehiculo) {
+		if (administradorCeldas == null) {
+			AdministradorCeldasCeibaFactory administradorCeldasFactory = new AdministradorCeldasCeibaFactory();
+			administradorCeldas = administradorCeldasFactory.createAdministradorCeldas(vehiculo);
+		}
+		return administradorCeldas;
 	}
 
 	@Override
-	public void ingresarVehiculo(Vehiculo vehiculo) throws VehiculoException, TipoVehiculoException {
+	public void ingresarCliente(Cliente cliente) throws VehiculoException, TipoVehiculoException, ClienteException {
 		
-		boolean validarPlacaVehiculo = validarPlacaVehiculo(vehiculo);
-		boolean validarVehiculoDuplicado = validarVehiculoConPlacaDuplicada(vehiculo);
+		boolean validarPlacaVehiculo = validarPlacaVehiculo(cliente.getVehiculo());
+		boolean validarVehiculoDuplicado = validarVehiculoConPlacaDuplicada(cliente.getVehiculo());
 		
 		ResourceBundle rb = ResourceBundle.getBundle("messages");
 		
 		if (validarPlacaVehiculo && validarVehiculoDuplicado) {
-			AdministradorCeldasCeibaFactory administradorCeldasFactory = new AdministradorCeldasCeibaFactory();
-			AdministradorCeldas administradorCeldas = administradorCeldasFactory.createAdministradorCeldas(vehiculo);
 			
-			administradorCeldas.ingresarVehiculo(vehiculo);
+			getAdministradorCeldas(cliente.getVehiculo()).ingresarCliente(cliente);
+			
 		} else if(!validarPlacaVehiculo) {
 			throw new VehiculoException(rb.getString("parqueadero.ingresarvehiculo.carro.placainvalida"));
 		} else {
@@ -59,7 +76,7 @@ public class ParqueaderoCeibaServiceImpl implements ParqueaderoService {
 	}
 	
 	private boolean validarPlacaVehiculo(Vehiculo vehiculo) {
-		DayOfWeek actualDay = localDate != null ? localDate.getDayOfWeek() : LocalDate.now().getDayOfWeek();
+		DayOfWeek actualDay = getLocalDate().getDayOfWeek();
 		
 		boolean permitirIngreso = true;
 		
@@ -86,11 +103,11 @@ public class ParqueaderoCeibaServiceImpl implements ParqueaderoService {
 		boolean vehiculoPermitido = true;
 		
 		try {
-			Vehiculo vehiculoResult = buscarVehiculoPorPlaca(vehiculo.getPlaca());
+			ClienteEntity clienteEntity = clienteDAO.buscarClienteActivoPorPlaca(vehiculo.getPlaca());
 			
-			vehiculoPermitido = !vehiculo.getPlaca().equals(vehiculoResult.getPlaca());
+			vehiculoPermitido = !vehiculo.getPlaca().equals(clienteEntity.getVehiculo().getPlaca());
 			
-		} catch (VehiculoException e) {
+		} catch (ClienteException e) {
 			logger.info(e.getMessage());
 		}
 		
@@ -98,21 +115,52 @@ public class ParqueaderoCeibaServiceImpl implements ParqueaderoService {
 	}
 
 	@Override
-	public Vehiculo buscarVehiculoPorPlaca(String placa) throws VehiculoException {
-		VehiculoEntity vehiculoEntity = vehiculoDAO.buscarVehiculoPorPlaca(placa);
+	public Cliente buscarClienteActivoPorPlaca(String placa) throws ClienteException {
+		ClienteEntity clienteEntity = clienteDAO.buscarClienteActivoPorPlaca(placa);
+		
+		Cliente cliente = null;
+		Vehiculo vehiculo = null;
+		
+		if(clienteEntity.getVehiculo().getTipoVehiculo().getDescripcion().equals(TipoVehiculoEnum.CARRO.getValue())) {
+			vehiculo = new Carro();
+			vehiculo.setPlaca(clienteEntity.getVehiculo().getPlaca());
+		} else if(clienteEntity.getVehiculo().getTipoVehiculo().getDescripcion().equals(TipoVehiculoEnum.MOTO.getValue())) {
+			vehiculo = new Moto();
+			vehiculo.setCilindraje(clienteEntity.getVehiculo().getCilindraje());
+			vehiculo.setPlaca(clienteEntity.getVehiculo().getPlaca());
+		}
+		
+		cliente = new Cliente();
+		cliente.setFechaIngreso(clienteEntity.getFechaIngreso());
+		cliente.setVehiculo(vehiculo);
+		
+		return cliente;
+	}
+
+	@Override
+	public Cliente retirarClientePorPlaca(String placa) throws ClienteException {
+		
+		Cliente clienteResult = null;
+		
+		ClienteEntity clienteEntity = clienteDAO.buscarClienteActivoPorPlaca(placa);
 		
 		Vehiculo vehiculo = null;
 		
-		if(vehiculoEntity.getTipoVehiculo().getDescripcion().equals(TipoVehiculoEnum.CARRO.getValue())) {
+		if(clienteEntity.getVehiculo().getTipoVehiculo().getDescripcion().equals(TipoVehiculoEnum.CARRO.getValue())) {
 			vehiculo = new Carro();
-			vehiculo.setPlaca(vehiculoEntity.getPlaca());
-		} else if(vehiculoEntity.getTipoVehiculo().getDescripcion().equals(TipoVehiculoEnum.MOTO.getValue())) {
+			vehiculo.setPlaca(clienteEntity.getVehiculo().getPlaca());
+		} else if(clienteEntity.getVehiculo().getTipoVehiculo().getDescripcion().equals(TipoVehiculoEnum.MOTO.getValue())) {
 			vehiculo = new Moto();
-			vehiculo.setCilindraje(vehiculoEntity.getCilindraje());
-			vehiculo.setPlaca(vehiculoEntity.getPlaca());
+			vehiculo.setCilindraje(clienteEntity.getVehiculo().getCilindraje());
+			vehiculo.setPlaca(clienteEntity.getVehiculo().getPlaca());
 		}
 		
-		return vehiculo;
+		clienteResult = new Cliente();
+		clienteResult.setVehiculo(vehiculo);
+		
+		clienteResult = getAdministradorCeldas(vehiculo).retirarCliente(clienteResult);
+		
+		return clienteResult;
 	}
 
 }

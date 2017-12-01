@@ -1,7 +1,5 @@
 package com.ceiba.parqueadero.ws.persistence.entities;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,17 +15,11 @@ public class VehiculoEntity {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String placa;
 	
 	@Column
 	private float cilindraje;
-	
-	@Column(nullable = false)
-	private Date fechaIngreso;
-	
-	@Column
-	private Date fechaSalida;
 	
 	@OneToOne
 	@JoinColumn(name="idTipoVehiculo")
@@ -58,17 +50,5 @@ public class VehiculoEntity {
 	public void setPlaca(String placa) {
 		this.placa = placa;
 	}
-	public Date getFechaIngreso() {
-		return fechaIngreso;
-	}
-	public void setFechaIngreso(Date fechaIngreso) {
-		this.fechaIngreso = fechaIngreso;
-	}
-	public Date getFechaSalida() {
-		return fechaSalida;
-	}
-	public void setFechaSalida(Date fechaSalida) {
-		this.fechaSalida = fechaSalida;
-	}	
 	
 }
