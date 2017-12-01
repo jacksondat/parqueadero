@@ -324,41 +324,6 @@ public class ParqueaderoCeibaTest {
 	}
 	
 	@Test
-	public void retirarCarroA1Hora() {
-		//Arrange
-		Cliente cliente = new Cliente();
-		cliente.setVehiculo(carro);
-		
-		//1hora
-		int unaHoraEnMilisegundos = 60*60*1000;
-		
-		Date fechaIngreso = new Date();
-		fechaIngreso.setTime(fechaIngreso.getTime() - unaHoraEnMilisegundos);
-		
-		VehiculoEntity vehiculoEntity = new VehiculoEntity();
-		vehiculoEntity.setPlaca(carro.getPlaca());
-		vehiculoEntity.setCilindraje(carro.getCilindraje());
-		ClienteEntity clienteEntity = new ClienteEntity();
-		clienteEntity.setFechaIngreso(fechaIngreso);
-		clienteEntity.setVehiculo(vehiculoEntity);
-		
-		try {
-			ClienteDAO clienteDAO = mock(ClienteDAO.class);
-			when(clienteDAO.buscarClienteActivoPorPlaca(carro.getPlaca())).thenReturn(clienteEntity);
-			
-			AdministradorCeldas administradorCeldas = new AdministradorCeldasCeibaCarros(clienteDAO);
-			
-			//Act
-			cliente = administradorCeldas.retirarCliente(cliente);
-			
-			//Assert
-			assertEquals("Deberia Cobrar 1 hora de parqueadero", VALOR_HORA_CARRO, cliente.getValor(), 0);
-		} catch (ClienteException e) {
-			fail();
-		}
-	}
-	
-	@Test
 	public void retirarCarroMenorA9Horas() {
 		//Arrange
 		Cliente cliente = new Cliente();
@@ -599,42 +564,6 @@ public class ParqueaderoCeibaTest {
 			
 			//Assert
 			assertEquals("Deberia Cobrar 1 hora de parqueadero mas recargo cilidraje", VALOR_HORA_MOTO + VALOR_CILINDRAJE_MOTO, cliente.getValor(), 0);
-		} catch (ClienteException e) {
-			fail();
-		}
-	}
-	
-	@Test
-	public void retirarMotoA1Hora() {
-		//Arrange
-		Cliente cliente = new Cliente();
-		cliente.setVehiculo(moto);
-		
-		//1hora
-		int unaHoraEnMilisegundos = 60*60*1000;
-		
-		Date fechaIngreso = new Date();
-		fechaIngreso.setTime(fechaIngreso.getTime() - unaHoraEnMilisegundos);
-		
-		VehiculoEntity vehiculoEntity = new VehiculoEntity();
-		vehiculoEntity.setPlaca(moto.getPlaca());
-		vehiculoEntity.setCilindraje(moto.getCilindraje());
-		
-		ClienteEntity clienteEntity = new ClienteEntity();
-		clienteEntity.setFechaIngreso(fechaIngreso);
-		clienteEntity.setVehiculo(vehiculoEntity);
-		
-		try {
-			ClienteDAO clienteDAO = mock(ClienteDAO.class);
-			when(clienteDAO.buscarClienteActivoPorPlaca(moto.getPlaca())).thenReturn(clienteEntity);
-			
-			AdministradorCeldas administradorCeldas = new AdministradorCeldasCeibaMotos(clienteDAO);
-			
-			//Act
-			cliente = administradorCeldas.retirarCliente(cliente);
-			
-			//Assert
-			assertEquals("Deberia Cobrar 1 hora de parqueadero", VALOR_HORA_MOTO, cliente.getValor(), 0);
 		} catch (ClienteException e) {
 			fail();
 		}
