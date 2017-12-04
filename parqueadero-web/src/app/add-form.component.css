@@ -1,0 +1,23 @@
+.agregar-vehiculos .boton {
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.agregar-vehiculos .formulario {
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.agregar-vehiculos .mensaje {
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+@media (min-width: 768px){	
+	.agregar-vehiculos .formulario form {
+		margin-top: 10px;
+	}
+}

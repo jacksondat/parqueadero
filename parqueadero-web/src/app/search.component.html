@@ -1,0 +1,50 @@
+<div class="busqueda container-fluid">
+	<div class="row">
+		<div class="col-md-6 input">
+			<div class="input-group">
+				<span class="input-group-addon input-label">Consultar Veh&iacute;culo</span>
+				<input type="text" class="form-control" placeholder="Ingrese la placa..." [(ngModel)]="placaInput">
+				<span class="input-group-btn">
+					<button class="btn btn-primary" type="button" (click)="buscar()">Buscar</button>
+				</span>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-10 result">
+			<div class="founded" *ngIf="resultado.valor === 0">
+				<h4>Resultados</h4>
+				<div class="card border-primary vehiculo-item">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-3">Placa: {{resultado.placa}}</div>
+							<div class="col-md-3">Tipo: {{resultado.tipoVehiculo | uppercase}}</div>
+							<div class="col-md-3">Fecha Ingreso: {{resultado.fechaIngreso | date:'yyyy/MM/dd'}}</div>
+							<div class="col-md-3"><div class="btn btn-danger" (click)="retirarVehiculo(resultado)">Retirar</div></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="not-founded" *ngIf="!founded">
+				<h4>No se encontraron veh&iacute;culos con placa {{resultado.placa | uppercase}}</h4>
+			</div>
+		</div>
+	</div>
+	<div class="retirar-vehiculos container-fluid">
+		<div class="modal" [class.show]="resultado.valor > 0">
+	  		<div class="modal-dialog" role="document">
+	    		<div class="modal-content">
+	      			<div class="modal-header">
+	        			<h5 class="modal-title">Valor Total {{resultado.valor | currency:'USD':true:'1.0'}}</h5>
+	      			</div>
+			      	<div class="modal-body">
+			        	<p>El veh&iacute;culo con placa {{resultado.placa}} ha sido retirado.</p>
+			      	</div>
+			      	<div class="modal-footer">
+			        	<button type="button" class="btn btn-primary" (click)="limpiarResultado()">Aceptar</button>
+			      	</div>
+	    		</div>
+	  		</div>
+		</div>
+	</div>
+</div>

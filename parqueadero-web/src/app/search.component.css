@@ -1,0 +1,36 @@
+.busqueda .input{
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.busqueda .input .input-label {
+	display: none
+}
+
+.busqueda .result {
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.vehiculo-item .btn {
+	width: 100%;
+	margin-top: 10px;
+}
+
+.show {
+	display: block;
+}
+
+@media (min-width: 768px){
+	.busqueda .input .input-label {
+		display: inline;
+	}
+	
+	.vehiculo-item .btn {
+		float: right;
+		width: auto;
+		margin: 0px;
+	}
+}

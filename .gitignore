@@ -11,5 +11,7 @@ Servers/
 /jacoco/
 .gradle/
 
+dist/
+
 logs/
 

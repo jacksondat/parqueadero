@@ -1,0 +1,51 @@
+<div class="agregar-vehiculos container-fluid">
+	<div class="row" *ngIf="successModal">
+		<div class="col-md-10 mensaje">
+			<div class="alert alert-dismissible alert-success">
+  				<button type="button" class="close" data-dismiss="alert" (click)="resetModal()">&times;</button>
+  				<p>El veh&iacute;culo con placa {{resultado.placa}} fue ingresado exit&oacute;samente.</p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row" *ngIf="exceptionModal">
+		<div class="col-md-10 mensaje">
+			<div class="alert alert-dismissible alert-danger">
+  				<button type="button" class="close" data-dismiss="alert" (click)="resetModal()">&times;</button>
+  				<p>{{resultado.mensaje}}</p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-10 formulario">
+			<h4>Agregar Veh&iacute;culo</h4>
+			<div class="form-group row">
+		    	<label for="placa" class="col-md-2 col-form-label">Placa</label>
+		    	<div class="col-md-10">
+		    		<input type="text" class="form-control" id="placa" aria-describedby="placaHelp" placeholder="Ingrese la placa" [(ngModel)]="placaInput">
+		    	</div>
+			</div>
+			<fieldset class="form-group">
+				<div class="row">
+					<legend class="col-form-legend col-md-2">Tipo Veh&iacute;culo</legend>
+					<div class="col-sm-10">
+		        		<div class="form-check">
+		          			<label class="form-check-label">
+		            			<input class="form-check-input" type="radio" id="tipoVehiculoCarro" value="carro" [checked]="radioCarro" (click)="toggleTipoVehiculo()">Carro
+		          			</label>
+		        		</div>
+		        		<div class="form-check">
+		          			<label class="form-check-label">
+		            			<input class="form-check-input" type="radio" id="tipoVehiculoMoto" value="moto" [checked]="radioMoto" (click)="toggleTipoVehiculo()">Moto
+		          			</label>
+		        		</div>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-10 boton"><div class="btn btn-info btn-lg btn-block" (click)="agregarVehiculo()" >Agregar Veh&iacute;culo</div></div>
+	</div>
+</div>
