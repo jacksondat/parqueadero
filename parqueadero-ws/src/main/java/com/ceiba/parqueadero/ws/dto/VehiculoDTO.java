@@ -8,6 +8,7 @@ public class VehiculoDTO {
 	private String tipoVehiculo;
 	private double valor;
 	private Date fechaIngreso;
+	private String mensaje;
 	
 	public String getTipoVehiculo() {
 		return tipoVehiculo;
@@ -38,5 +39,11 @@ public class VehiculoDTO {
 	}
 	public void setFechaIngreso(Date fechaIngreso) {
 		this.fechaIngreso = fechaIngreso;
+	}
+	public String getMensaje() {
+		return mensaje;
+	}
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
 	}
 }

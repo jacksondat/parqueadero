@@ -59,10 +59,12 @@ public class VehiculoController {
 	    
 	    try {
 			parqueaderoService.ingresarCliente(cliente);
-			
-			return Response.status(Status.CREATED).build();
+						
+			return Response.status(Status.CREATED).entity(vehiculoDTO).build();
 		} catch (VehiculoException|TipoVehiculoException | ClienteException e) {
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+			vehiculoDTO = new VehiculoDTO();
+			vehiculoDTO.setMensaje(e.getMessage());
+			return Response.status(Status.ACCEPTED).entity(vehiculoDTO).build();
 		}
 	}
 	
@@ -75,10 +77,11 @@ public class VehiculoController {
 	    ParqueaderoService parqueaderoService = parqueaderoServiceFactory.createParqueaderoService(ParqueaderoCompany.CEIBA);
 	    
 	    Cliente cliente;
+	    VehiculoDTO vehiculoResponse;
 		try {
-			cliente = parqueaderoService.buscarClienteActivoPorPlaca(placa);
+			cliente = parqueaderoService.buscarClienteActivoPorPlaca(placa.toUpperCase());
 			
-			VehiculoDTO vehiculoResponse = new VehiculoDTO();
+			vehiculoResponse = new VehiculoDTO();
 		    vehiculoResponse.setPlaca(cliente.getVehiculo().getPlaca());
 		    vehiculoResponse.setCilindraje(cliente.getVehiculo().getCilindraje());
 		    vehiculoResponse.setTipoVehiculo(parseTipoVehiculo(cliente.getVehiculo()));
@@ -86,7 +89,9 @@ public class VehiculoController {
 			
 			return Response.status(Status.ACCEPTED).entity(vehiculoResponse).build();
 		} catch (ClienteException e) {
-			return Response.status(Status.ACCEPTED).entity(e.getMessage()).build();
+			vehiculoResponse = new VehiculoDTO();
+			vehiculoResponse.setMensaje(e.getMessage());
+			return Response.status(Status.ACCEPTED).entity(vehiculoResponse).build();
 		}
 	}
 	
@@ -99,10 +104,11 @@ public class VehiculoController {
 	    ParqueaderoService parqueaderoService = parqueaderoServiceFactory.createParqueaderoService(ParqueaderoCompany.CEIBA);
 	    
 	    Cliente cliente;
+	    VehiculoDTO vehiculoResponse;
 		try {			
-			cliente = parqueaderoService.retirarClientePorPlaca(placa);
+			cliente = parqueaderoService.retirarClientePorPlaca(placa.toUpperCase());
 
-			VehiculoDTO vehiculoResponse = new VehiculoDTO();
+			vehiculoResponse = new VehiculoDTO();
 			vehiculoResponse.setPlaca(cliente.getVehiculo().getPlaca());
 		    vehiculoResponse.setCilindraje(cliente.getVehiculo().getCilindraje());
 		    vehiculoResponse.setTipoVehiculo(parseTipoVehiculo(cliente.getVehiculo()));
@@ -111,7 +117,9 @@ public class VehiculoController {
 			
 			return Response.status(Status.ACCEPTED).entity(vehiculoResponse).build();
 		} catch (ClienteException e) {
-			return Response.status(Status.ACCEPTED).entity(e.getMessage()).build();
+			vehiculoResponse = new VehiculoDTO();
+			vehiculoResponse.setMensaje(e.getMessage());
+			return Response.status(Status.ACCEPTED).entity(vehiculoResponse).build();
 		}
 	}
 	
