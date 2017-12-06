@@ -22,7 +22,7 @@ public class ClienteEntity {
 	@Column
 	private Date fechaSalida;
 	
-	@Column(nullable = false)
+	@Column
 	private double valor;
 	
 	@OneToOne

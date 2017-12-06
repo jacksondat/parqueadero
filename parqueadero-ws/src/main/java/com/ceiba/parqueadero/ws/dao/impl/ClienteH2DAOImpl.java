@@ -52,9 +52,11 @@ public class ClienteH2DAOImpl implements ClienteDAO {
 		
 		ClienteEntity cliente = null;
 		
+		CriteriaBuilder cb;
+		CriteriaQuery<ClienteEntity> q;
 		try{
-			CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-			CriteriaQuery<ClienteEntity> q = cb.createQuery(ClienteEntity.class);
+			cb = entityManager.getCriteriaBuilder();
+			q = cb.createQuery(ClienteEntity.class);
 			
 			Root<ClienteEntity> clienteRoot = q.from(ClienteEntity.class);
 			Join<ClienteEntity, VehiculoEntity> vehiculoJoin = clienteRoot.join("vehiculo");
@@ -68,8 +70,8 @@ public class ClienteH2DAOImpl implements ClienteDAO {
 			q.select(clienteRoot)
 				.where(predicates.toArray(new Predicate[]{}));
 	
-			cliente = entityManager.createQuery( q ).getSingleResult();
-		}catch(Exception e){
+			cliente = entityManager.createQuery( q ).setMaxResults(1).getSingleResult();
+		}catch(Exception e) {
 			throw new ClienteException("No se encontraron vehiculos activos con placa "+placa+". "+e.getMessage());
 		}finally{
 			entityManager.close();
