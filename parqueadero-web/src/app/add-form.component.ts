@@ -17,9 +17,19 @@ export class AddFormComponent {
 
   constructor(private vehicleService: VehicleService) {}
 
-  toggleTipoVehiculo() {
-    this.radioCarro = !this.radioCarro;
-    this.radioMoto = !this.radioMoto;
+  resetTipoVehiculo() {
+    this.radioCarro = false;
+    this.radioMoto = false;
+  }
+  
+  clickTipoVehiculoCarro() {
+    this.resetTipoVehiculo();
+    this.radioCarro = true;
+  }
+  
+  clickTipoVehiculoMoto() {
+    this.resetTipoVehiculo();
+    this.radioMoto = true;
   }
 
   resetModal() {
